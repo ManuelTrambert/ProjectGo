@@ -6,20 +6,20 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Translate;
 
+import java.util.Random;
 
 /**
- * Created by manueltrambert on 09/11/2017.
+ * Created by manueltrambert on 21/11/2017.
  */
-public class ReversiBoard extends Pane {
-    // default constructor for the class
-    public ReversiBoard() {
+public class GoBoard extends Pane {
+    public GoBoard() {
         surrounding = new int[3][3];
         can_reverse = new boolean[3][3];
-        render = new ReversiPiece[8][8];
+        render = new GoPiece[8][8];
         in_play = true;
         initialiseRender();
-        current_player = 1;
-        opposing = 2;
+        current_player = 2;
+        opposing = 1;
         player2_score = 2;
         player1_score = 2;
 
@@ -68,26 +68,7 @@ public class ReversiBoard extends Pane {
                 horizontal[0], horizontal[1], horizontal[2], horizontal[3], horizontal[4], horizontal[5], horizontal[6], horizontal[7],
                 vertical[0], vertical[1], vertical[2], vertical[3], vertical[4], vertical[5], vertical[6], vertical[7]);
 
-        render[3][3].setPiece(1);
-        render[4][4].setPiece(1);
-        render[3][4].setPiece(2);
-        render[4][3].setPiece(2);
-
-        render[3][3].resize(cell_width, cell_height);
-        render[3][3].relocate(3 * cell_width, 3 * cell_height);
-        getChildren().add(render[3][3]);
-
-        render[3][4].resize(cell_width, cell_height);
-        render[3][4].relocate(3 * cell_width, 4 * cell_height);
-        getChildren().add(render[3][4]);
-
-        render[4][3].resize(cell_width, cell_height);
-        render[4][3].relocate(4 * cell_width, 3 * cell_height);
-        getChildren().add(render[4][3]);
-
-        render[4][4].resize(cell_width, cell_height);
-        render[4][4].relocate(4 * cell_width, 4 * cell_height);
-        getChildren().add(render[4][4]);
+        resetGame();
 
     }
 
@@ -99,10 +80,10 @@ public class ReversiBoard extends Pane {
         determineSurrounding(indexx, indexy);
         determineReverse(indexx, indexy);
 
-        if (!in_play || getPiece(indexx, indexy) != 0
+       /* if (!in_play || getPiece(indexx, indexy) != 0
                 || !adjacentOpposingPiece(indexx, indexy) || !determineReverse(indexx, indexy)) {
             return;
-        }
+        }*/
 
         placeAndReverse(indexx, indexy);
         updateScores();
@@ -121,40 +102,40 @@ public class ReversiBoard extends Pane {
         background.setWidth(width);
         background.setHeight(height);
 // set a new y on the horizontal lines and translate them into place
-        horizontal_t[0].setY(cell_height);
-        horizontal_t[1].setY(2 * cell_height);
-        horizontal_t[2].setY(3 * cell_height);
-        horizontal_t[3].setY(4 * cell_height);
-        horizontal_t[4].setY(5 * cell_height);
-        horizontal_t[5].setY(6 * cell_height);
-        horizontal_t[6].setY(7 * cell_height);
-        horizontal_t[7].setY(8 * cell_height);
+        horizontal_t[0].setY(0.5 * cell_height);
+        horizontal_t[1].setY(1.5 * cell_height);
+        horizontal_t[2].setY(2.5 * cell_height);
+        horizontal_t[3].setY(3.5 * cell_height);
+        horizontal_t[4].setY(4.5 * cell_height);
+        horizontal_t[5].setY(5.5 * cell_height);
+        horizontal_t[6].setY(6.5 * cell_height);
+        horizontal_t[7].setY(7.5 * cell_height);
 
-        horizontal[0].setEndX(width);
-        horizontal[1].setEndX(width);
-        horizontal[2].setEndX(width);
-        horizontal[3].setEndX(width);
-        horizontal[4].setEndX(width);
-        horizontal[5].setEndX(width);
-        horizontal[6].setEndX(width);
-        horizontal[7].setEndX(width);
+        horizontal[0].setEndX(width - cell_width / 2);
+        horizontal[1].setEndX(width - cell_width / 2);
+        horizontal[2].setEndX(width - cell_width / 2);
+        horizontal[3].setEndX(width - cell_width / 2);
+        horizontal[4].setEndX(width - cell_width / 2);
+        horizontal[5].setEndX(width - cell_width / 2);
+        horizontal[6].setEndX(width - cell_width / 2);
+        horizontal[7].setEndX(width - cell_width / 2);
 // set a new x on the vertical lines and translate them into place
-        vertical_t[0].setX(cell_width);
-        vertical_t[1].setX(2 * cell_width);
-        vertical_t[2].setX(3 * cell_width);
-        vertical_t[3].setX(4 * cell_width);
-        vertical_t[4].setX(5 * cell_width);
-        vertical_t[5].setX(6 * cell_width);
-        vertical_t[6].setX(7 * cell_width);
-        vertical_t[7].setX(8 * cell_width);
-        vertical[0].setEndY(height);
-        vertical[1].setEndY(height);
-        vertical[2].setEndY(height);
-        vertical[3].setEndY(height);
-        vertical[4].setEndY(height);
-        vertical[5].setEndY(height);
-        vertical[6].setEndY(height);
-        vertical[7].setEndY(height);
+        vertical_t[0].setX(0.5 * cell_width);
+        vertical_t[1].setX(1.5 * cell_width);
+        vertical_t[2].setX(2.5 * cell_width);
+        vertical_t[3].setX(3.5 * cell_width);
+        vertical_t[4].setX(4.5 * cell_width);
+        vertical_t[5].setX(5.5 * cell_width);
+        vertical_t[6].setX(6.5 * cell_width);
+        vertical_t[7].setX(7.5 * cell_width);
+        vertical[0].setEndY(height - cell_height / 2);
+        vertical[1].setEndY(height - cell_height / 2);
+        vertical[2].setEndY(height - cell_height / 2);
+        vertical[3].setEndY(height - cell_height / 2);
+        vertical[4].setEndY(height - cell_height / 2);
+        vertical[5].setEndY(height - cell_height / 2);
+        vertical[6].setEndY(height - cell_height / 2);
+        vertical[7].setEndY(height - cell_height / 2);
 
         pieceResizeRelocate();
     }
@@ -178,8 +159,8 @@ public class ReversiBoard extends Pane {
         getChildren().add(render[4][3]);
 
         in_play = true;
-        current_player = 1;
-        opposing = 2;
+        current_player = 2;
+        opposing = 1;
         player1_score = 2;
         player2_score = 2;
     }
@@ -197,101 +178,33 @@ public class ReversiBoard extends Pane {
     // private method that will initialise the background and the lines
     private void initialiseLinesBackground() {
         background = new Rectangle();
-        background.setFill(Color.CYAN);
+        background.setFill(Color.RED);
         horizontal = new Line[8];
         vertical = new Line[8];
-        horizontal[0] = new Line();
-        horizontal[1] = new Line();
-        horizontal[2] = new Line();
-        horizontal[3] = new Line();
-        horizontal[4] = new Line();
-        horizontal[5] = new Line();
-        horizontal[6] = new Line();
-        horizontal[7] = new Line();
 
-        vertical[0] = new Line();
-        vertical[1] = new Line();
-        vertical[2] = new Line();
-        vertical[3] = new Line();
-        vertical[4] = new Line();
-        vertical[5] = new Line();
-        vertical[6] = new Line();
-        vertical[7] = new Line();
-
-        horizontal[0].setStroke(Color.BLACK);
-        horizontal[1].setStroke(Color.BLACK);
-        horizontal[2].setStroke(Color.BLACK);
-        horizontal[3].setStroke(Color.BLACK);
-        horizontal[4].setStroke(Color.BLACK);
-        horizontal[5].setStroke(Color.BLACK);
-        horizontal[6].setStroke(Color.BLACK);
-        horizontal[7].setStroke(Color.BLACK);
-
-        vertical[0].setStroke(Color.BLACK);
-        vertical[1].setStroke(Color.BLACK);
-        vertical[2].setStroke(Color.BLACK);
-        vertical[3].setStroke(Color.BLACK);
-        vertical[4].setStroke(Color.BLACK);
-        vertical[5].setStroke(Color.BLACK);
-        vertical[6].setStroke(Color.BLACK);
-        vertical[7].setStroke(Color.BLACK);
+        for (int i = 0; i < 8; i += 1) {
+            horizontal[i] = new Line();
+            vertical[i] = new Line();
+            vertical[i].setStroke(Color.BLACK);
+            horizontal[i].setStroke(Color.BLACK);
+        }
     }
 
     // private method for resizing and relocating the horizontal lines
     private void horizontalResizeRelocate(final double width) {
 
-        horizontal[0].setStartX(0);
-        horizontal[0].setStartY(0);
-        horizontal[0].setEndY(0);
-        horizontal[1].setStartX(0);
-        horizontal[1].setStartY(0);
-        horizontal[1].setEndY(0);
-        horizontal[2].setStartX(0);
-        horizontal[2].setStartY(0);
-        horizontal[2].setEndY(0);
-        horizontal[3].setStartX(0);
-        horizontal[3].setStartY(0);
-        horizontal[3].setEndY(0);
-        horizontal[4].setStartX(0);
-        horizontal[4].setStartY(0);
-        horizontal[4].setEndY(0);
-        horizontal[5].setStartX(0);
-        horizontal[5].setStartY(0);
-        horizontal[5].setEndY(0);
-        horizontal[6].setStartX(0);
-        horizontal[6].setStartY(0);
-        horizontal[6].setEndY(0);
-        horizontal[7].setStartX(0);
-        horizontal[7].setStartY(0);
-        horizontal[7].setEndY(0);
+        for (int i = 0; i < 8; i += 1) {
+            horizontal[i].setStartX(cell_width / 2);
+            horizontal[i].setStartY(cell_height / 2);
+        }
     }
 
     // private method for resizing and relocating the vertical lines
     private void verticalResizeRelocate(final double height) {
-        vertical[0].setStartX(0);
-        vertical[0].setStartY(0);
-        vertical[0].setEndY(0);
-        vertical[1].setStartX(0);
-        vertical[1].setStartY(0);
-        vertical[1].setEndY(0);
-        vertical[2].setStartX(0);
-        vertical[2].setStartY(0);
-        vertical[2].setEndY(0);
-        vertical[3].setStartX(0);
-        vertical[3].setStartY(0);
-        vertical[3].setEndY(0);
-        vertical[4].setStartX(0);
-        vertical[4].setStartY(0);
-        vertical[4].setEndY(0);
-        vertical[5].setStartX(0);
-        vertical[5].setStartY(0);
-        vertical[5].setEndY(0);
-        vertical[6].setStartX(0);
-        vertical[6].setStartY(0);
-        vertical[6].setEndY(0);
-        vertical[7].setStartX(0);
-        vertical[7].setStartY(0);
-        vertical[7].setEndY(0);
+        for (int i = 0; i < 8; i += 1) {
+            vertical[i].setStartX(cell_width / 2);
+            vertical[i].setStartY(cell_height / 2);
+        }
     }
 
     // private method for swapping the players
@@ -480,6 +393,8 @@ public class ReversiBoard extends Pane {
     // private method to determine if a player has a move available
     private boolean canMove() {
         // NOTE: this is to keep the compiler happy until you get to this part
+       /* int nbCheck = 0;
+        while (nbCheck < 2) {*/
         for (int i = 0; i < 8; i += 1) {
             for (int j = 0; j < 8; j += 1) {
                 if (getPiece(i, j) == 0) {
@@ -490,6 +405,9 @@ public class ReversiBoard extends Pane {
                 }
             }
         }
+        swapPlayers();
+         /*   nbCheck += 1;
+        }*/
         return false;
     }
 
@@ -500,7 +418,9 @@ public class ReversiBoard extends Pane {
         } else if (player1_score > player2_score) {
             System.out.println("Player 1 win. The game is finished press space to replay");
         } else {
-            System.out.println("Draw. The game is finished press space to replay");
+            Random winner = new Random();
+            int winnerrand = winner.nextInt(2) + 1;
+            System.out.println("Draw. The fate chose Player " + winnerrand + " as winner. The game is finished press space to replay");
         }
     }
 
@@ -508,13 +428,13 @@ public class ReversiBoard extends Pane {
     private void initialiseRender() {
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                render[i][j] = new ReversiPiece(0);
+                render[i][j] = new GoPiece(0);
             }
         }
     }
 
 
-    // private fields that make the reversi board work
+    // private fields that make the Go board work
 
     // rectangle that makes the background of the board
     private Rectangle background;
@@ -526,7 +446,7 @@ public class ReversiBoard extends Pane {
     private Translate[] vertical_t;
     // arrays for the internal representation of the board and the pieces that are
     // in place
-    private ReversiPiece[][] render;
+    private GoPiece[][] render;
     // the current player who is playing and who is his opposition
     private int current_player;
     private int opposing;

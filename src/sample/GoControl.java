@@ -6,16 +6,14 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 
-
 /**
- * Created by manueltrambert on 09/11/2017.
+ * Created by manueltrambert on 21/11/2017.
  */
-public class ReversiControl extends Control {
-    // constructor for the class
-    public ReversiControl() {
-        setSkin(new ReversiControlSkin(this));
-        setSkin(new ReversiControlSkin(this));
-        rb_board = new ReversiBoard();
+public class GoControl extends Control {
+    public GoControl() {
+        setSkin(new GoControlSkin(this));
+        setSkin(new GoControlSkin(this));
+        rb_board = new GoBoard();
         getChildren().add(rb_board);
 
         setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -45,6 +43,6 @@ public class ReversiControl extends Control {
         rb_board.resize(width, height);
     }
 
-    // private fields of a reversi board
-    ReversiBoard rb_board;
+    // private fields of a Go board
+    GoBoard rb_board;
 }

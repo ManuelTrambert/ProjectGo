@@ -3,15 +3,14 @@ package sample;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Ellipse;
-import javafx.scene.shape.Line;
 import javafx.scene.transform.Translate;
 
 /**
- * Created by manueltrambert on 09/11/2017.
+ * Created by manueltrambert on 21/11/2017.
  */
-public class ReversiPiece extends Group {
+public class GoPiece extends Group {
     // default constructor for the class
-    public ReversiPiece(int player) {
+    public GoPiece(int player) {
         t = new Translate();
         this.player = player;
 
