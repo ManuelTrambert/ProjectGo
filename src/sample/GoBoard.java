@@ -26,7 +26,7 @@ public class GoBoard extends Pane {
         initialiseLinesBackground();
         horizontalResizeRelocate(cell_width);
         verticalResizeRelocate(cell_height);
-        horizontal_t = new Translate[8];
+        horizontal_t = new Translate[7];
         horizontal_t[0] = new Translate(0, 0);
         horizontal_t[1] = new Translate(0, 0);
         horizontal_t[2] = new Translate(0, 0);
@@ -34,7 +34,6 @@ public class GoBoard extends Pane {
         horizontal_t[4] = new Translate(0, 0);
         horizontal_t[5] = new Translate(0, 0);
         horizontal_t[6] = new Translate(0, 0);
-        horizontal_t[7] = new Translate(0, 0);
 
         horizontal[0].getTransforms().add(horizontal_t[0]);
         horizontal[1].getTransforms().add(horizontal_t[1]);
@@ -43,7 +42,6 @@ public class GoBoard extends Pane {
         horizontal[4].getTransforms().add(horizontal_t[4]);
         horizontal[5].getTransforms().add(horizontal_t[5]);
         horizontal[6].getTransforms().add(horizontal_t[6]);
-        horizontal[7].getTransforms().add(horizontal_t[7]);
 
         vertical_t = new Translate[8];
         vertical_t[0] = new Translate(0, 0);
@@ -53,7 +51,6 @@ public class GoBoard extends Pane {
         vertical_t[4] = new Translate(0, 0);
         vertical_t[5] = new Translate(0, 0);
         vertical_t[6] = new Translate(0, 0);
-        vertical_t[7] = new Translate(0, 0);
 
         vertical[0].getTransforms().add(vertical_t[0]);
         vertical[1].getTransforms().add(vertical_t[1]);
@@ -62,11 +59,10 @@ public class GoBoard extends Pane {
         vertical[4].getTransforms().add(vertical_t[4]);
         vertical[5].getTransforms().add(vertical_t[5]);
         vertical[6].getTransforms().add(vertical_t[6]);
-        vertical[7].getTransforms().add(vertical_t[7]);
 
         getChildren().addAll(background,
-                horizontal[0], horizontal[1], horizontal[2], horizontal[3], horizontal[4], horizontal[5], horizontal[6], horizontal[7],
-                vertical[0], vertical[1], vertical[2], vertical[3], vertical[4], vertical[5], vertical[6], vertical[7]);
+                horizontal[0], horizontal[1], horizontal[2], horizontal[3], horizontal[4], horizontal[5], horizontal[6],
+                vertical[0], vertical[1], vertical[2], vertical[3], vertical[4], vertical[5], vertical[6]);
 
         resetGame();
 
@@ -96,46 +92,58 @@ public class GoBoard extends Pane {
     @Override
     public void resize(double width, double height) {
         super.resize(width, height);
-        cell_width = width / 8.0;
-        cell_height = height / 8.0;
+        cell_width = width / 10.0;
+        cell_height = height / 10.0;
 
         background.setWidth(width);
         background.setHeight(height);
 // set a new y on the horizontal lines and translate them into place
-        horizontal_t[0].setY(0.5 * cell_height);
-        horizontal_t[1].setY(1.5 * cell_height);
-        horizontal_t[2].setY(2.5 * cell_height);
-        horizontal_t[3].setY(3.5 * cell_height);
-        horizontal_t[4].setY(4.5 * cell_height);
-        horizontal_t[5].setY(5.5 * cell_height);
-        horizontal_t[6].setY(6.5 * cell_height);
-        horizontal_t[7].setY(7.5 * cell_height);
+        horizontal_t[0].setY(2 * cell_height);
+        horizontal_t[1].setY(3 * cell_height);
+        horizontal_t[2].setY(4 * cell_height);
+        horizontal_t[3].setY(5 * cell_height);
+        horizontal_t[4].setY(6 * cell_height);
+        horizontal_t[5].setY(7 * cell_height);
+        horizontal_t[6].setY(8 * cell_height);
 
-        horizontal[0].setEndX(width - cell_width / 2);
-        horizontal[1].setEndX(width - cell_width / 2);
-        horizontal[2].setEndX(width - cell_width / 2);
-        horizontal[3].setEndX(width - cell_width / 2);
-        horizontal[4].setEndX(width - cell_width / 2);
-        horizontal[5].setEndX(width - cell_width / 2);
-        horizontal[6].setEndX(width - cell_width / 2);
-        horizontal[7].setEndX(width - cell_width / 2);
+        horizontal[0].setEndX(width - (2 * cell_width));
+        horizontal[1].setEndX(width - (2 * cell_width));
+        horizontal[2].setEndX(width - (2 * cell_width));
+        horizontal[3].setEndX(width - (2 * cell_width));
+        horizontal[4].setEndX(width - (2 * cell_width));
+        horizontal[5].setEndX(width - (2 * cell_width));
+        horizontal[6].setEndX(width - (2 * cell_width));
+        horizontal[0].setStartX(2 * cell_width);
+        horizontal[1].setStartX(2 * cell_width);
+        horizontal[2].setStartX(2 * cell_width);
+        horizontal[3].setStartX(2 * cell_width);
+        horizontal[4].setStartX(2 * cell_width);
+        horizontal[5].setStartX(2 * cell_width);
+        horizontal[6].setStartX(2 * cell_width);
 // set a new x on the vertical lines and translate them into place
-        vertical_t[0].setX(0.5 * cell_width);
-        vertical_t[1].setX(1.5 * cell_width);
-        vertical_t[2].setX(2.5 * cell_width);
-        vertical_t[3].setX(3.5 * cell_width);
-        vertical_t[4].setX(4.5 * cell_width);
-        vertical_t[5].setX(5.5 * cell_width);
-        vertical_t[6].setX(6.5 * cell_width);
-        vertical_t[7].setX(7.5 * cell_width);
-        vertical[0].setEndY(height - cell_height / 2);
-        vertical[1].setEndY(height - cell_height / 2);
-        vertical[2].setEndY(height - cell_height / 2);
-        vertical[3].setEndY(height - cell_height / 2);
-        vertical[4].setEndY(height - cell_height / 2);
-        vertical[5].setEndY(height - cell_height / 2);
-        vertical[6].setEndY(height - cell_height / 2);
-        vertical[7].setEndY(height - cell_height / 2);
+
+        vertical_t[0].setX(2 * cell_width);
+        vertical_t[1].setX(3 * cell_width);
+        vertical_t[2].setX(4 * cell_width);
+        vertical_t[3].setX(5 * cell_width);
+        vertical_t[4].setX(6 * cell_width);
+        vertical_t[5].setX(7 * cell_width);
+        vertical_t[6].setX(8 * cell_width);
+
+        vertical[0].setEndY(height - (2 * cell_height));
+        vertical[1].setEndY(height - (2 * cell_height));
+        vertical[2].setEndY(height - (2 * cell_height));
+        vertical[3].setEndY(height - (2 * cell_height));
+        vertical[4].setEndY(height - (2 * cell_height));
+        vertical[5].setEndY(height - (2 * cell_height));
+        vertical[6].setEndY(height - (2 * cell_height));
+        vertical[0].setStartY(2 * cell_height);
+        vertical[1].setStartY(2 * cell_height);
+        vertical[2].setStartY(2 * cell_height);
+        vertical[3].setStartY(2 * cell_height);
+        vertical[4].setStartY(2 * cell_height);
+        vertical[5].setStartY(2 * cell_height);
+        vertical[6].setStartY(2 * cell_height);
 
         pieceResizeRelocate();
     }
@@ -352,8 +360,7 @@ public class GoBoard extends Pane {
     private void placeAndReverse(final int x, final int y) {
         render[x][y].setPiece(current_player);
         render[x][y].resize(cell_width, cell_height);
-        render[x][y].relocate(x * cell_width, y *
-                cell_height);
+        render[x][y].relocate(x * cell_width, y * cell_height);
         getChildren().add(render[x][y]);
         for (int i = 0; i < 3; i += 1) {
             for (int j = 0; j < 3; j += 1) {
