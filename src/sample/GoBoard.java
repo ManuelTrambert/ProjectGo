@@ -70,22 +70,35 @@ public class GoBoard extends Pane {
 
     // public method that will try to place a piece in the given x,y coordinate
     public void placePiece(final double x, final double y) {
-        int indexx = (int) (x / cell_width);
-        int indexy = (int) (y / cell_height);
+        double tmpx = x;
+        double tmpy = y;
 
-        determineSurrounding(indexx, indexy);
-        determineReverse(indexx, indexy);
+        System.out.println(x);
+        System.out.println(y);
+        if (x % 100 < 50) {
+            tmpx += 50;
+        }
+        if (y % 100 < 50) {
+            tmpy += 50;
+        }
+        int indexx = (int) (tmpx / cell_width);
+        int indexy = (int) (tmpy / cell_height);
+
+        if (indexx > 2 && indexy > 2) {
+            determineSurrounding(indexx, indexy);
+            determineReverse(indexx, indexy);
 
        /* if (!in_play || getPiece(indexx, indexy) != 0
                 || !adjacentOpposingPiece(indexx, indexy) || !determineReverse(indexx, indexy)) {
             return;
         }*/
 
-        placeAndReverse(indexx, indexy);
-        updateScores();
-        swapPlayers();
-        System.out.println("Player 1 score : " + player1_score + "\nPlayer 2 score : " + player2_score + "\nIt\'s the turn of the Player " + current_player);
-        determineEndGame();
+            placeAndReverse(indexx, indexy);
+            updateScores();
+            swapPlayers();
+            System.out.println("Player 1 score : " + player1_score + "\nPlayer 2 score : " + player2_score + "\nIt\'s the turn of the Player " + current_player);
+            determineEndGame();
+        }
     }
 
     // overridden version of the resize method to give the board the correct size
@@ -251,7 +264,7 @@ public class GoBoard extends Pane {
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
                 if (getPiece(i, j) != 0) {
-                    render[i][j].relocate(i * cell_width, j * cell_height);
+                    render[i][j].relocate(i * cell_width - (cell_width / 2), j * cell_height - (cell_height / 2));
                     render[i][j].resize(cell_width, cell_height);
                 }
             }
