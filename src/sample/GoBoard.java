@@ -1,11 +1,19 @@
 package sample;
 
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.geometry.Pos;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Translate;
+import jdk.nashorn.internal.runtime.Debug;
 
+import java.io.Console;
 import java.util.Random;
 
 /**
@@ -22,6 +30,26 @@ public class GoBoard extends Pane {
         opposing = 1;
         player2_score = 2;
         player1_score = 2;
+
+        player1_gridpane = new GridPane();
+        player1_label_score = new Label("SCORE: " + player1_score);
+        player1_label_prisoner = new Label("PRISONERS: " + player1_score);
+        player1_label_teritory = new Label("TERRITORY: " + player1_score);
+        player2_gridpane = new GridPane();
+        player2_label_score = new Label("SCORE: " + player2_score);
+        player2_label_prisoner = new Label("PRISONERS: " + player2_score);
+        player2_label_teritory = new Label("TERRITORY: " + player2_score);
+        turn = new Label("TURN: BLACK");
+        pass = new Button("PASS");
+        pass.setOnAction(event -> { swapPlayers(); });
+
+        player1_gridpane.add(player1_label_score, 0, 0);
+        player1_gridpane.add(player1_label_prisoner, 0, 1);
+        player1_gridpane.add(player1_label_teritory, 0, 2);
+        player2_gridpane.add(player2_label_score, 0, 0);
+        player2_gridpane.add(player2_label_prisoner, 0, 1);
+        player2_gridpane.add(player2_label_teritory, 0, 2);
+
 
         initialiseLinesBackground();
         horizontalResizeRelocate(cell_width);
@@ -62,7 +90,8 @@ public class GoBoard extends Pane {
 
         getChildren().addAll(background,
                 horizontal[0], horizontal[1], horizontal[2], horizontal[3], horizontal[4], horizontal[5], horizontal[6],
-                vertical[0], vertical[1], vertical[2], vertical[3], vertical[4], vertical[5], vertical[6]);
+                vertical[0], vertical[1], vertical[2], vertical[3], vertical[4], vertical[5], vertical[6],
+                player1_gridpane, player2_gridpane, pass, turn);
 
         resetGame();
 
@@ -70,35 +99,22 @@ public class GoBoard extends Pane {
 
     // public method that will try to place a piece in the given x,y coordinate
     public void placePiece(final double x, final double y) {
-        double tmpx = x;
-        double tmpy = y;
+        int indexx = (int) (x / cell_width);
+        int indexy = (int) (y / cell_height);
 
-        System.out.println(x);
-        System.out.println(y);
-        if (x % 100 < 50) {
-            tmpx += 50;
-        }
-        if (y % 100 < 50) {
-            tmpy += 50;
-        }
-        int indexx = (int) (tmpx / cell_width);
-        int indexy = (int) (tmpy / cell_height);
-
-        if (indexx > 2 && indexy > 2) {
-            determineSurrounding(indexx, indexy);
-            determineReverse(indexx, indexy);
+        determineSurrounding(indexx, indexy);
+        determineReverse(indexx, indexy);
 
        /* if (!in_play || getPiece(indexx, indexy) != 0
                 || !adjacentOpposingPiece(indexx, indexy) || !determineReverse(indexx, indexy)) {
             return;
         }*/
 
-            placeAndReverse(indexx, indexy);
-            updateScores();
-            swapPlayers();
-            System.out.println("Player 1 score : " + player1_score + "\nPlayer 2 score : " + player2_score + "\nIt\'s the turn of the Player " + current_player);
-            determineEndGame();
-        }
+        placeAndReverse(indexx, indexy);
+        updateScores();
+        swapPlayers();
+        System.out.println("Player 1 score : " + player1_score + "\nPlayer 2 score : " + player2_score + "\nIt\'s the turn of the Player " + current_player);
+        determineEndGame();
     }
 
     // overridden version of the resize method to give the board the correct size
@@ -110,6 +126,14 @@ public class GoBoard extends Pane {
 
         background.setWidth(width);
         background.setHeight(height);
+        player1_gridpane.setLayoutX(width / 4);
+        player1_gridpane.setLayoutY(height / 20);
+        player2_gridpane.setLayoutX(width / 4);
+        player2_gridpane.setLayoutY(height / 1.2);
+        pass.setLayoutX(10);
+        pass.setLayoutY(height / 2);
+        turn.setLayoutX(10);
+        turn.setLayoutY(height / 2 + 30);
 // set a new y on the horizontal lines and translate them into place
         horizontal_t[0].setY(2 * cell_height);
         horizontal_t[1].setY(3 * cell_height);
@@ -233,8 +257,10 @@ public class GoBoard extends Pane {
         opposing = current_player;
         if (current_player == 1) {
             current_player = 2;
+            turn.setText("TURN: BLACK");
         } else {
             current_player = 1;
+            turn.setText("TURN: WHITE");
         }
         for (int i = 0; i < 3; i += 1) {
             for (int j = 0; j < 3; j += 1) {
@@ -257,6 +283,10 @@ public class GoBoard extends Pane {
                 }
             }
         }
+        player1_label_score.setText("SCORE: " + player1_score);
+        player2_label_score.setText("SCORE: " + player2_score);
+        player1_label_prisoner.setText("PRISONERS: " + player1_score);
+        player2_label_prisoner.setText("PRISONERS: " + player2_score);
     }
 
     // private method for resizing and relocating all the pieces
@@ -264,7 +294,7 @@ public class GoBoard extends Pane {
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
                 if (getPiece(i, j) != 0) {
-                    render[i][j].relocate(i * cell_width - (cell_width / 2), j * cell_height - (cell_height / 2));
+                    render[i][j].relocate(i * cell_width, j * cell_height);
                     render[i][j].resize(cell_width, cell_height);
                 }
             }
@@ -482,4 +512,14 @@ public class GoBoard extends Pane {
     private int[][] surrounding;
     // 3x3 array that determines if a reverse can be made in any direction
     private boolean[][] can_reverse;
+    private GridPane player1_gridpane;
+    private Label player1_label_score;
+    private Label player1_label_prisoner;
+    private Label player1_label_teritory;
+    private GridPane player2_gridpane;
+    private Label player2_label_score;
+    private Label player2_label_prisoner;
+    private Label player2_label_teritory;
+    private Label turn;
+    private Button pass;
 }
