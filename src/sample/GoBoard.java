@@ -41,7 +41,9 @@ public class GoBoard extends Pane {
         player2_label_teritory = new Label("TERRITORY: " + player2_score);
         turn = new Label("TURN: BLACK");
         pass = new Button("PASS");
-        pass.setOnAction(event -> { swapPlayers(); });
+        pass.setOnAction(event -> {
+            swapPlayers();
+        });
 
         player1_gridpane.add(player1_label_score, 0, 0);
         player1_gridpane.add(player1_label_prisoner, 0, 1);
@@ -54,44 +56,33 @@ public class GoBoard extends Pane {
         initialiseLinesBackground();
         horizontalResizeRelocate(cell_width);
         verticalResizeRelocate(cell_height);
-        horizontal_t = new Translate[7];
-        horizontal_t[0] = new Translate(0, 0);
-        horizontal_t[1] = new Translate(0, 0);
-        horizontal_t[2] = new Translate(0, 0);
-        horizontal_t[3] = new Translate(0, 0);
-        horizontal_t[4] = new Translate(0, 0);
-        horizontal_t[5] = new Translate(0, 0);
-        horizontal_t[6] = new Translate(0, 0);
-
-        horizontal[0].getTransforms().add(horizontal_t[0]);
-        horizontal[1].getTransforms().add(horizontal_t[1]);
-        horizontal[2].getTransforms().add(horizontal_t[2]);
-        horizontal[3].getTransforms().add(horizontal_t[3]);
-        horizontal[4].getTransforms().add(horizontal_t[4]);
-        horizontal[5].getTransforms().add(horizontal_t[5]);
-        horizontal[6].getTransforms().add(horizontal_t[6]);
-
+        horizontal_t = new Translate[8];
+        horizontal_G = new Translate[7];
         vertical_t = new Translate[8];
-        vertical_t[0] = new Translate(0, 0);
-        vertical_t[1] = new Translate(0, 0);
-        vertical_t[2] = new Translate(0, 0);
-        vertical_t[3] = new Translate(0, 0);
-        vertical_t[4] = new Translate(0, 0);
-        vertical_t[5] = new Translate(0, 0);
-        vertical_t[6] = new Translate(0, 0);
+        vertical_G = new Translate[7];
+        for (int i = 0; i < 8; i += 1) {
+            vertical_t[i] = new Translate(0, 0);
+            horizontal_t[i] = new Translate(0, 0);
 
-        vertical[0].getTransforms().add(vertical_t[0]);
-        vertical[1].getTransforms().add(vertical_t[1]);
-        vertical[2].getTransforms().add(vertical_t[2]);
-        vertical[3].getTransforms().add(vertical_t[3]);
-        vertical[4].getTransforms().add(vertical_t[4]);
-        vertical[5].getTransforms().add(vertical_t[5]);
-        vertical[6].getTransforms().add(vertical_t[6]);
+            horizontal[i].getTransforms().add(horizontal_t[i]);
+            vertical[i].getTransforms().add(vertical_t[i]);
+        }
+
+        for (int i = 0; i < 7; i += 1) {
+            horizontal_G[i] = new Translate(0, 0);
+            vertical_G[i] = new Translate(0, 0);
+
+            horizontalGo[i].getTransforms().add(horizontal_G[i]);
+            verticalGo[i].getTransforms().add(vertical_G[i]);
+        }
 
         getChildren().addAll(background,
-                horizontal[0], horizontal[1], horizontal[2], horizontal[3], horizontal[4], horizontal[5], horizontal[6],
-                vertical[0], vertical[1], vertical[2], vertical[3], vertical[4], vertical[5], vertical[6],
+                horizontal[0], horizontal[1], horizontal[2], horizontal[3], horizontal[4], horizontal[5], horizontal[6], horizontal[7],
+                vertical[0], vertical[1], vertical[2], vertical[3], vertical[4], vertical[5], vertical[6], vertical[7],
                 player1_gridpane, player2_gridpane, pass, turn);
+        for (int i = 0; i < 7; i += 1) {
+            getChildren().addAll(horizontalGo[i], verticalGo[i]);
+        }
 
         resetGame();
 
@@ -105,6 +96,9 @@ public class GoBoard extends Pane {
         determineSurrounding(indexx, indexy);
         determineReverse(indexx, indexy);
 
+        System.out.println(indexx + " : " + indexy);
+        if (indexx < 1|| indexy < 1)
+            return;
        /* if (!in_play || getPiece(indexx, indexy) != 0
                 || !adjacentOpposingPiece(indexx, indexy) || !determineReverse(indexx, indexy)) {
             return;
@@ -121,66 +115,34 @@ public class GoBoard extends Pane {
     @Override
     public void resize(double width, double height) {
         super.resize(width, height);
-        cell_width = width / 10.0;
-        cell_height = height / 10.0;
+        cell_width = width / 8.0;
+        cell_height = height / 8.0;
 
         background.setWidth(width);
         background.setHeight(height);
-        player1_gridpane.setLayoutX(width / 4);
-        player1_gridpane.setLayoutY(height / 20);
-        player2_gridpane.setLayoutX(width / 4);
-        player2_gridpane.setLayoutY(height / 1.2);
-        pass.setLayoutX(10);
-        pass.setLayoutY(height / 2);
-        turn.setLayoutX(10);
-        turn.setLayoutY(height / 2 + 30);
 // set a new y on the horizontal lines and translate them into place
-        horizontal_t[0].setY(2 * cell_height);
-        horizontal_t[1].setY(3 * cell_height);
-        horizontal_t[2].setY(4 * cell_height);
-        horizontal_t[3].setY(5 * cell_height);
-        horizontal_t[4].setY(6 * cell_height);
-        horizontal_t[5].setY(7 * cell_height);
-        horizontal_t[6].setY(8 * cell_height);
+        for (int i = 0; i < 8; i += 1) {
+            horizontal_t[i].setY((i + 1) * cell_height);
+            horizontal[i].setEndX(width);
+            vertical_t[i].setX((i + 1) * cell_width);
+            vertical[i].setEndY(height);
+            vertical[i].setStroke(Color.TRANSPARENT);
+            horizontal[i].setStroke(Color.TRANSPARENT);
+        }
 
-        horizontal[0].setEndX(width - (2 * cell_width));
-        horizontal[1].setEndX(width - (2 * cell_width));
-        horizontal[2].setEndX(width - (2 * cell_width));
-        horizontal[3].setEndX(width - (2 * cell_width));
-        horizontal[4].setEndX(width - (2 * cell_width));
-        horizontal[5].setEndX(width - (2 * cell_width));
-        horizontal[6].setEndX(width - (2 * cell_width));
-        horizontal[0].setStartX(2 * cell_width);
-        horizontal[1].setStartX(2 * cell_width);
-        horizontal[2].setStartX(2 * cell_width);
-        horizontal[3].setStartX(2 * cell_width);
-        horizontal[4].setStartX(2 * cell_width);
-        horizontal[5].setStartX(2 * cell_width);
-        horizontal[6].setStartX(2 * cell_width);
+        for (int i = 0; i < 7; i += 1) {
+            horizontal_G[i].setY((i + 1.5) * cell_height);
+            horizontalGo[i].setEndX(width);
+            vertical_G[i].setX((i + 1.5) * cell_width);
+            verticalGo[i].setEndY(height);
+            verticalGo[i].setStroke(Color.BLACK);
+            horizontalGo[i].setStroke(Color.BLACK);
+            horizontalGo[i].setStartX(1.5 * cell_width);
+            verticalGo[i].setStartY(1.5 * cell_height);
+            horizontalGo[i].setEndX(7.5 * cell_width);
+            verticalGo[i].setEndY(7.5 * cell_height);
+        }
 // set a new x on the vertical lines and translate them into place
-
-        vertical_t[0].setX(2 * cell_width);
-        vertical_t[1].setX(3 * cell_width);
-        vertical_t[2].setX(4 * cell_width);
-        vertical_t[3].setX(5 * cell_width);
-        vertical_t[4].setX(6 * cell_width);
-        vertical_t[5].setX(7 * cell_width);
-        vertical_t[6].setX(8 * cell_width);
-
-        vertical[0].setEndY(height - (2 * cell_height));
-        vertical[1].setEndY(height - (2 * cell_height));
-        vertical[2].setEndY(height - (2 * cell_height));
-        vertical[3].setEndY(height - (2 * cell_height));
-        vertical[4].setEndY(height - (2 * cell_height));
-        vertical[5].setEndY(height - (2 * cell_height));
-        vertical[6].setEndY(height - (2 * cell_height));
-        vertical[0].setStartY(2 * cell_height);
-        vertical[1].setStartY(2 * cell_height);
-        vertical[2].setStartY(2 * cell_height);
-        vertical[3].setStartY(2 * cell_height);
-        vertical[4].setStartY(2 * cell_height);
-        vertical[5].setStartY(2 * cell_height);
-        vertical[6].setStartY(2 * cell_height);
 
         pieceResizeRelocate();
     }
@@ -226,12 +188,20 @@ public class GoBoard extends Pane {
         background.setFill(Color.RED);
         horizontal = new Line[8];
         vertical = new Line[8];
+        horizontalGo = new Line[7];
+        verticalGo = new Line[7];
 
         for (int i = 0; i < 8; i += 1) {
             horizontal[i] = new Line();
             vertical[i] = new Line();
             vertical[i].setStroke(Color.BLACK);
             horizontal[i].setStroke(Color.BLACK);
+        }
+        for (int i = 0; i < 7; i += 1) {
+            horizontalGo[i] = new Line();
+            verticalGo[i] = new Line();
+            verticalGo[i].setStroke(Color.BLACK);
+            horizontalGo[i].setStroke(Color.BLACK);
         }
     }
 
@@ -242,6 +212,10 @@ public class GoBoard extends Pane {
             horizontal[i].setStartX(cell_width / 2);
             horizontal[i].setStartY(cell_height / 2);
         }
+        for (int i = 0; i < 7; i += 1) {
+            horizontalGo[i].setStartX(cell_width / 2 + cell_width);
+            horizontalGo[i].setStartY(cell_height / 2 + cell_height);
+        }
     }
 
     // private method for resizing and relocating the vertical lines
@@ -249,6 +223,10 @@ public class GoBoard extends Pane {
         for (int i = 0; i < 8; i += 1) {
             vertical[i].setStartX(cell_width / 2);
             vertical[i].setStartY(cell_height / 2);
+        }
+        for (int i = 0; i < 7; i += 1) {
+            verticalGo[i].setStartX(cell_width / 2 + cell_width);
+            verticalGo[i].setStartY(cell_height / 2 + cell_height);
         }
     }
 
@@ -491,9 +469,13 @@ public class GoBoard extends Pane {
     // arrays for the lines that makeup the horizontal and vertical grid lines
     private Line[] horizontal;
     private Line[] vertical;
+    private Line[] horizontalGo;
+    private Line[] verticalGo;
     // arrays holding translate objects for the horizontal and vertical grid lines
     private Translate[] horizontal_t;
     private Translate[] vertical_t;
+    private Translate[] horizontal_G;
+    private Translate[] vertical_G;
     // arrays for the internal representation of the board and the pieces that are
     // in place
     private GoPiece[][] render;
