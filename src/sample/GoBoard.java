@@ -45,12 +45,14 @@ public class GoBoard extends Pane {
             swapPlayers();
         });
 
-        player1_gridpane.add(player1_label_score, 0, 0);
-        player1_gridpane.add(player1_label_prisoner, 0, 1);
-        player1_gridpane.add(player1_label_teritory, 0, 2);
-        player2_gridpane.add(player2_label_score, 0, 0);
-        player2_gridpane.add(player2_label_prisoner, 0, 1);
-        player2_gridpane.add(player2_label_teritory, 0, 2);
+        player1_gridpane.add((new Label("PLAYER 1")), 0, 0);
+        player1_gridpane.add(player1_label_score, 0, 1);
+        player1_gridpane.add(player1_label_prisoner, 0, 2);
+        player1_gridpane.add(player1_label_teritory, 0, 3);
+        player2_gridpane.add((new Label("PLAYER 2")), 0, 0);
+        player2_gridpane.add(player2_label_score, 0, 1);
+        player2_gridpane.add(player2_label_prisoner, 0, 2);
+        player2_gridpane.add(player2_label_teritory, 0, 3);
 
 
         initialiseLinesBackground();
@@ -120,6 +122,14 @@ public class GoBoard extends Pane {
 
         background.setWidth(width);
         background.setHeight(height);
+        player1_gridpane.setLayoutX(width / 3);
+        player1_gridpane.setLayoutY(10);
+        player2_gridpane.setLayoutX(width / 1.5);
+        player2_gridpane.setLayoutY(10);
+        pass.setLayoutX(width / 15);
+        pass.setLayoutY(height / 2);
+        turn.setLayoutX(width / 15 - 15);
+        turn.setLayoutY(height / 2 + 30);
 // set a new y on the horizontal lines and translate them into place
         for (int i = 0; i < 8; i += 1) {
             horizontal_t[i].setY((i + 1) * cell_height);
