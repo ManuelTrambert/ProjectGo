@@ -3,6 +3,7 @@ package sample;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
@@ -32,27 +33,24 @@ public class GoBoard extends Pane {
         player1_score = 2;
 
         player1_gridpane = new GridPane();
-        player1_label_score = new Label("SCORE: " + player1_score);
         player1_label_prisoner = new Label("PRISONERS: " + player1_score);
-        player1_label_teritory = new Label("TERRITORY: " + player1_score);
+        player1_label_territory = new Label("TERRITORY: " + player1_score);
         player2_gridpane = new GridPane();
-        player2_label_score = new Label("SCORE: " + player2_score);
         player2_label_prisoner = new Label("PRISONERS: " + player2_score);
-        player2_label_teritory = new Label("TERRITORY: " + player2_score);
+        player2_label_territory = new Label("TERRITORY: " + player2_score);
         turn = new Label("TURN: BLACK");
         pass = new Button("PASS");
-        pass.setOnAction(event -> {
-            swapPlayers();
-        });
+        rules = new Button("RULES");
+
+        pass.setOnAction(event -> swapPlayers());
+        rules.setOnAction(event -> displayRules());
 
         player1_gridpane.add((new Label("PLAYER 1")), 0, 0);
-        player1_gridpane.add(player1_label_score, 0, 1);
-        player1_gridpane.add(player1_label_prisoner, 0, 2);
-        player1_gridpane.add(player1_label_teritory, 0, 3);
+        player1_gridpane.add(player1_label_prisoner, 0, 1);
+        player1_gridpane.add(player1_label_territory, 0, 2);
         player2_gridpane.add((new Label("PLAYER 2")), 0, 0);
-        player2_gridpane.add(player2_label_score, 0, 1);
-        player2_gridpane.add(player2_label_prisoner, 0, 2);
-        player2_gridpane.add(player2_label_teritory, 0, 3);
+        player2_gridpane.add(player2_label_prisoner, 0, 1);
+        player2_gridpane.add(player2_label_territory, 0, 2);
 
 
         initialiseLinesBackground();
@@ -81,7 +79,7 @@ public class GoBoard extends Pane {
         getChildren().addAll(background,
                 horizontal[0], horizontal[1], horizontal[2], horizontal[3], horizontal[4], horizontal[5], horizontal[6], horizontal[7],
                 vertical[0], vertical[1], vertical[2], vertical[3], vertical[4], vertical[5], vertical[6], vertical[7],
-                player1_gridpane, player2_gridpane, pass, turn);
+                player1_gridpane, player2_gridpane, pass, turn, rules);
         for (int i = 0; i < 7; i += 1) {
             getChildren().addAll(horizontalGo[i], verticalGo[i]);
         }
@@ -130,9 +128,11 @@ public class GoBoard extends Pane {
         player2_gridpane.setLayoutX(width / 1.5);
         player2_gridpane.setLayoutY(10);
         pass.setLayoutX(width / 15);
-        pass.setLayoutY(height / 2);
+        pass.setLayoutY(40);
+        rules.setLayoutX(width / 15 - 3);
+        rules.setLayoutY(10);
         turn.setLayoutX(width / 15 - 15);
-        turn.setLayoutY(height / 2 + 30);
+        turn.setLayoutY(70);
 // set a new y on the horizontal lines and translate them into place
         for (int i = 0; i < 8; i += 1) {
             horizontal_t[i].setY((i + 1) * cell_height);
@@ -266,10 +266,8 @@ public class GoBoard extends Pane {
                 }
             }
         }
-        player1_label_score.setText("SCORE: " + player1_score);
-        player2_label_score.setText("SCORE: " + player2_score);
-        player1_label_prisoner.setText("PRISONERS: " + player1_score);
-        player2_label_prisoner.setText("PRISONERS: " + player2_score);
+        player1_label_territory.setText("TERRITORY: " + player1_score);
+        player2_label_territory.setText("TERRITORY: " + player2_score);
     }
 
     // private method for resizing and relocating all the pieces
@@ -466,6 +464,23 @@ public class GoBoard extends Pane {
         }
     }
 
+    private void displayRules() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Go rules");
+        alert.setHeaderText(null);
+        alert.setContentText("A game of Go starts with an empty board. Each player has an effectively unlimited" +
+                "supply of pieces (called stones),one taking the black stones, the other taking white. The main" +
+                " object of the game is to use your stones to form territories by surrounding vacant areas of the" +
+                " board. It is also possible to capture your opponent's stones by completely surrounding them.\n" +
+                "\n" +
+                "Players take turns, placing one of their stones on a vacant point at each turn, with Black playing" +
+                " first. Note that stones are placed on the intersections of the lines rather than in the squares" +
+                " and once played stones are not moved. However they may be captured, in which case they are removed" +
+                " from the board, and kept by the capturing player as prisoners.");
+
+        alert.showAndWait();
+    }
+
 
     // private fields that make the Go board work
 
@@ -500,13 +515,12 @@ public class GoBoard extends Pane {
     // 3x3 array that determines if a reverse can be made in any direction
     private boolean[][] can_reverse;
     private GridPane player1_gridpane;
-    private Label player1_label_score;
     private Label player1_label_prisoner;
-    private Label player1_label_teritory;
+    private Label player1_label_territory;
     private GridPane player2_gridpane;
-    private Label player2_label_score;
     private Label player2_label_prisoner;
-    private Label player2_label_teritory;
+    private Label player2_label_territory;
     private Label turn;
     private Button pass;
+    private Button rules;
 }
