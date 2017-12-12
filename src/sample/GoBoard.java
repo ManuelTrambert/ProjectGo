@@ -107,11 +107,6 @@ public class GoBoard extends Pane {
         swapPlayers();
         System.out.println("Player 1 score : " + player1_score + "\nPlayer 2 score : " + player2_score + "\nIt\'s the turn of the Player " + current_player);
         determineEndGame();
-        for (int i = 0; i < 7; i += 1) {
-            for (int j = 0; j < 7; j += 1) {
-                System.out.println("render[" + i + "][" + j + "] : " + render[i][j].getPiece());
-            }
-        }
     }
 
     // overridden version of the resize method to give the board the correct size
@@ -436,7 +431,6 @@ public class GoBoard extends Pane {
                 }
             }
         }
-        swapPlayers();
          /*   nbCheck += 1;
         }*/
         return false;
