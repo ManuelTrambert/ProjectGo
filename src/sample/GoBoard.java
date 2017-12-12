@@ -92,20 +92,18 @@ public class GoBoard extends Pane {
 
     // public method that will try to place a piece in the given x,y coordinate
     public void placePiece(final double x, final double y) {
-        int indexx = (int) (x / cell_width);
-        int indexy = (int) (y / cell_height);
+        int indexx = (int) (x / cell_width) - 1;
+        int indexy = (int) (y / cell_height) - 1;
 
         determineSurrounding(indexx, indexy);
         determineReverse(indexx, indexy);
 
-
-        if (indexx < 1|| indexy < 1)
-            return;
        /* if (!in_play || getPiece(indexx, indexy) != 0
                 || !adjacentOpposingPiece(indexx, indexy) || !determineReverse(indexx, indexy)) {
             return;
         }*/
 
+        System.out.println(indexx + " : " + indexy + " test");
         placeAndReverse(indexx, indexy);
         updateScores();
         swapPlayers();
@@ -279,7 +277,7 @@ public class GoBoard extends Pane {
         for (int i = 0; i < 7; i++) {
             for (int j = 0; j < 7; j++) {
                 if (getPiece(i, j) != 0) {
-                    render[i][j].relocate(i * cell_width, j * cell_height);
+                    render[i][j].relocate((i + 1) * cell_width, (j + 1) * cell_height);
                     render[i][j].resize(cell_width, cell_height);
                 }
             }
@@ -388,7 +386,7 @@ public class GoBoard extends Pane {
     private void placeAndReverse(final int x, final int y) {
         render[x][y].setPiece(current_player);
         render[x][y].resize(cell_width, cell_height);
-        render[x][y].relocate(x * cell_width, y * cell_height);
+        render[x][y].relocate((x + 1) * cell_width, (y + 1) * cell_height);
         getChildren().add(render[x][y]);
         for (int i = 0; i < 3; i += 1) {
             for (int j = 0; j < 3; j += 1) {
@@ -411,7 +409,7 @@ public class GoBoard extends Pane {
     // for determing reverse chains much easier
     private int getPiece(final int x, final int y) {
         // NOTE: this is to keep the compiler happy until you get to this point
-        if (x > 7 || x < 0 || y > 7 || y < 0) {
+        if (x > 6 || x < 0 || y > 6 || y < 0) {
             return -1;
         }
         return render[x][y].getPiece();
