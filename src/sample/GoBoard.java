@@ -23,7 +23,7 @@ public class GoBoard extends Pane {
     public GoBoard() {
         surrounding = new int[3][3];
         can_reverse = new boolean[3][3];
-        render = new GoPiece[8][8];
+        render = new GoPiece[7][7];
         in_play = true;
         initialiseRender();
         current_player = 2;
@@ -98,7 +98,7 @@ public class GoBoard extends Pane {
         determineSurrounding(indexx, indexy);
         determineReverse(indexx, indexy);
 
-        System.out.println(indexx + " : " + indexy);
+
         if (indexx < 1|| indexy < 1)
             return;
        /* if (!in_play || getPiece(indexx, indexy) != 0
@@ -111,6 +111,11 @@ public class GoBoard extends Pane {
         swapPlayers();
         System.out.println("Player 1 score : " + player1_score + "\nPlayer 2 score : " + player2_score + "\nIt\'s the turn of the Player " + current_player);
         determineEndGame();
+        for (int i = 0; i < 7; i += 1) {
+            for (int j = 0; j < 7; j += 1) {
+                System.out.println("render[" + i + "][" + j + "] : " + render[i][j].getPiece());
+            }
+        }
     }
 
     // overridden version of the resize method to give the board the correct size
@@ -166,14 +171,6 @@ public class GoBoard extends Pane {
                 can_reverse[i][j] = false;
             }
         }
-        render[3][3].setPiece(1);
-        getChildren().add(render[3][3]);
-        render[4][4].setPiece(1);
-        getChildren().add(render[4][4]);
-        render[3][4].setPiece(2);
-        getChildren().add(render[3][4]);
-        render[4][3].setPiece(2);
-        getChildren().add(render[4][3]);
 
         in_play = true;
         current_player = 2;
@@ -184,8 +181,8 @@ public class GoBoard extends Pane {
 
     // private method that will reset the renders
     private void resetRenders() {
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
+        for (int i = 0; i < 7; i++) {
+            for (int j = 0; j < 7; j++) {
                 getChildren().remove(render[i][j]);
                 render[i][j].setPiece(0);
             }
@@ -262,8 +259,8 @@ public class GoBoard extends Pane {
     private void updateScores() {
         player1_score = 0;
         player2_score = 0;
-        for (int i = 0; i < 8; i += 1) {
-            for (int j = 0; j < 8; j += 1) {
+        for (int i = 0; i < 7; i += 1) {
+            for (int j = 0; j < 7; j += 1) {
                 if (getPiece(i, j) == 1) {
                     player1_score += 1;
                 } else if (getPiece(i, j) == 2) {
@@ -279,8 +276,8 @@ public class GoBoard extends Pane {
 
     // private method for resizing and relocating all the pieces
     private void pieceResizeRelocate() {
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
+        for (int i = 0; i < 7; i++) {
+            for (int j = 0; j < 7; j++) {
                 if (getPiece(i, j) != 0) {
                     render[i][j].relocate(i * cell_width, j * cell_height);
                     render[i][j].resize(cell_width, cell_height);
@@ -433,8 +430,8 @@ public class GoBoard extends Pane {
         // NOTE: this is to keep the compiler happy until you get to this part
        /* int nbCheck = 0;
         while (nbCheck < 2) {*/
-        for (int i = 0; i < 8; i += 1) {
-            for (int j = 0; j < 8; j += 1) {
+        for (int i = 0; i < 7; i += 1) {
+            for (int j = 0; j < 7; j += 1) {
                 if (getPiece(i, j) == 0) {
                     determineSurrounding(i, j);
                     if (in_play && adjacentOpposingPiece(i, j) && determineReverse(i, j)) {
@@ -464,8 +461,8 @@ public class GoBoard extends Pane {
 
     // private method that will initialise everything in the render array
     private void initialiseRender() {
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
+        for (int i = 0; i < 7; i++) {
+            for (int j = 0; j < 7; j++) {
                 render[i][j] = new GoPiece(0);
             }
         }
