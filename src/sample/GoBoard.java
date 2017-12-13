@@ -93,20 +93,18 @@ public class GoBoard extends Pane {
         int indexx = (int) (x / cell_width) - 1;
         int indexy = (int) (y / cell_height) - 1;
 
-        determineSurrounding(indexx, indexy);
-        determineReverse(indexx, indexy);
 
        /* if (!in_play || getPiece(indexx, indexy) != 0
                 || !adjacentOpposingPiece(indexx, indexy) || !determineReverse(indexx, indexy)) {
             return;
         }*/
 
-        System.out.println(indexx + " : " + indexy + " test");
         placeAndReverse(indexx, indexy);
         updateScores();
         swapPlayers();
+        deleteSurrounded();
         System.out.println("Player 1 score : " + player1_score + "\nPlayer 2 score : " + player2_score + "\nIt\'s the turn of the Player " + current_player);
-        determineEndGame();
+        //determineEndGame();
     }
 
     // overridden version of the resize method to give the board the correct size
@@ -279,68 +277,30 @@ public class GoBoard extends Pane {
 
     // private method for determining which pieces surround x,y will update the
     // surrounding array to reflect this
-    private void determineSurrounding(final int x, final int y) {
-        surrounding[0][0] = getPiece(x - 1, y - 1);
-        surrounding[0][1] = getPiece(x - 1, y);
-        surrounding[0][2] = getPiece(x - 1, y + 1);
-        surrounding[1][0] = getPiece(x, y - 1);
-        surrounding[1][1] = getPiece(x, y);
-        surrounding[1][2] = getPiece(x, y + 1);
-        surrounding[2][0] = getPiece(x + 1, y - 1);
-        surrounding[2][1] = getPiece(x + 1, y);
-        surrounding[2][2] = getPiece(x + 1, y + 1);
+    private boolean determineSurrounding(final int x, final int y) {
+        boolean right = false;
+        boolean up = false;
+        boolean left = false;
+        boolean down = false;
+        if ((x < 6 && render[x + 1][y].getPiece() == opposing) || x >= 6) {
+            right = true;
+        }
+        if ((x > 0 && render[x - 1][y].getPiece() == opposing) || x <= 0) {
+            left = true;
+        }
+        if ((y < 6 && render[x][y + 1].getPiece() == opposing) || y >= 6) {
+            up = true;
+        }
+        if ((y > 0 && render[x][y - 1].getPiece() == opposing) || y <= 0) {
+            down = true;
+        }
+        return (right && left && up && down);
     }
 
     // private method for determining if a reverse can be made will update the can_reverse
     // array to reflect the answers will return true if a single reverse is found
+
     private boolean determineReverse(final int x, final int y) {
-        if (surrounding[0][0] == opposing) {
-            can_reverse[0][0] = isReverseChain(x, y, -1, -1, current_player);
-        } else {
-            can_reverse[0][0] = false;
-        }
-        if (surrounding[1][0] == opposing) {
-            can_reverse[1][0] = isReverseChain(x, y, 0, -1, current_player);
-        } else {
-            can_reverse[1][0] = false;
-        }
-        if (surrounding[2][0] == opposing) {
-            can_reverse[2][0] = isReverseChain(x, y, 1, -1, current_player);
-        } else {
-            can_reverse[2][0] = false;
-        }
-        if (surrounding[0][1] == opposing) {
-            can_reverse[0][1] = isReverseChain(x, y, -1, 0, current_player);
-        } else {
-            can_reverse[0][1] = false;
-        }
-        if (surrounding[0][2] == opposing) {
-            can_reverse[0][2] = isReverseChain(x, y, -1, 1, current_player);
-        } else {
-            can_reverse[0][2] = false;
-        }
-        if (surrounding[1][2] == opposing) {
-            can_reverse[1][2] = isReverseChain(x, y, 0, 1, current_player);
-        } else {
-            can_reverse[1][2] = false;
-        }
-        if (surrounding[2][2] == opposing) {
-            can_reverse[2][2] = isReverseChain(x, y, 1, 1, current_player);
-        } else {
-            can_reverse[2][2] = false;
-        }
-        if (surrounding[2][1] == opposing) {
-            can_reverse[2][1] = isReverseChain(x, y, 1, 0, current_player);
-        } else {
-            can_reverse[2][1] = false;
-        }
-        for (int i = 0; i < 3; i += 1) {
-            for (int j = 0; j < 3; j += 1) {
-                if (can_reverse[i][j]) {
-                    return true;
-                }
-            }
-        }
         return false;
         // NOTE: this is to keep the compiler happy until you get to this part
     }
@@ -349,29 +309,12 @@ public class GoBoard extends Pane {
     // a player piece in the given direction (dx,dy) returns true if possible
     // assumes that the first piece has already been checked
     private boolean isReverseChain(final int x, final int y, final int dx, final int dy, final int player) {
-        // NOTE: this is to keep the compiler happy until you get to this part
-        for (int i = x + dx, j = y + dy; i <= 7 && i > 0 && j > 0 && j <= 7; i += dx, j += dy) {
-            if (getPiece(i, j) == 0) {
-                return false;
-            }
-            if (getPiece(i, j) == player) {
-                return true;
-            }
-        }
         return false;
     }
 
     // private method for determining if any of the surrounding pieces are an opposing
     // piece. if a single one exists then return true otherwise false
     private boolean adjacentOpposingPiece(final int x, final int y) {
-        // NOTE: this is to keep the compiler happy until you get to this part
-        for (int i = 0; i < 3; i += 1) {
-            for (int j = 0; j < 3; j += 1) {
-                if (surrounding[i][j] == opposing) {
-                    return true;
-                }
-            }
-        }
         return false;
     }
 
@@ -381,20 +324,11 @@ public class GoBoard extends Pane {
         render[x][y].resize(cell_width, cell_height);
         render[x][y].relocate((x + 1) * cell_width, (y + 1) * cell_height);
         getChildren().add(render[x][y]);
-        for (int i = 0; i < 3; i += 1) {
-            for (int j = 0; j < 3; j += 1) {
-                if (can_reverse[i][j]) {
-                    reverseChain(x, y, i - 1, j - 1);
-                }
-            }
-        }
     }
 
     // private method to reverse a chain
     private void reverseChain(final int x, final int y, final int dx, final int dy) {
-        for (int i = x + dx, j = y + dy; i <= 7 && i > 0 && j <= 7 && j > 0 && getPiece(i, j) != current_player; i += dx, j += dy) {
-            render[i][j].swapPiece();
-        }
+
     }
 
     // private method for getting a piece on the board. this will return the board
@@ -410,43 +344,27 @@ public class GoBoard extends Pane {
 
     // private method that will determine if the end of the game has been reached
     private void determineEndGame() {
-        if (player2_score == 0 || player1_score == 0 || !canMove()) {
-            determineWinner();
-            in_play = false;
-        }
+
     }
 
     // private method to determine if a player has a move available
     private boolean canMove() {
-        // NOTE: this is to keep the compiler happy until you get to this part
-       /* int nbCheck = 0;
-        while (nbCheck < 2) {*/
+        return false;
+    }
+
+    private void deleteSurrounded() {
         for (int i = 0; i < 7; i += 1) {
             for (int j = 0; j < 7; j += 1) {
-                if (getPiece(i, j) == 0) {
-                    determineSurrounding(i, j);
-                    if (in_play && adjacentOpposingPiece(i, j) && determineReverse(i, j)) {
-                        return true;
-                    }
+                if (determineSurrounding(j, i)) {
+                    render[j][i].setPiece(0);
                 }
             }
         }
-         /*   nbCheck += 1;
-        }*/
-        return false;
     }
 
     // private method that determines who won the game
     private void determineWinner() {
-        if (player2_score > player1_score) {
-            System.out.println("Player 2 win. The game is finished press space to replay");
-        } else if (player1_score > player2_score) {
-            System.out.println("Player 1 win. The game is finished press space to replay");
-        } else {
-            Random winner = new Random();
-            int winnerrand = winner.nextInt(2) + 1;
-            System.out.println("Draw. The fate chose Player " + winnerrand + " as winner. The game is finished press space to replay");
-        }
+
     }
 
     // private method that will initialise everything in the render array
