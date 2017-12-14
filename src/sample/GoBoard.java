@@ -24,6 +24,7 @@ public class GoBoard extends Pane {
     public GoBoard() {
         surrounding = new int[3][3];
         can_reverse = new boolean[3][3];
+        checkDeleting = new boolean[7][7];
         render = new GoPiece[7][7];
         in_play = true;
         initialiseRender();
@@ -105,13 +106,15 @@ public class GoBoard extends Pane {
                 || !adjacentOpposingPiece(indexx, indexy) || !determineReverse(indexx, indexy)) {
             return;
         }*/
-
-        placeAndReverse(indexx, indexy);
-        updateScores();
-        swapPlayers();
-        deleteSurrounded();
-        System.out.println("Player 1 score : " + player1_score + "\nPlayer 2 score : " + player2_score + "\nIt\'s the turn of the Player " + current_player);
-
+        if (!suicideRules(indexx, indexy)) {
+            placeAndReverse(indexx, indexy);
+            updateScores();
+            swapPlayers();
+            deleteSurrounded();
+            System.out.println("Player 1 score : " + player1_score + "\nPlayer 2 score : " + player2_score + "\nIt\'s the turn of the Player " + current_player);
+        } else {
+            System.out.println("Impossible to play here. It would be a suicide play.");
+        }
     }
 
     // overridden version of the resize method to give the board the correct size
@@ -284,23 +287,57 @@ public class GoBoard extends Pane {
 
     // private method for determining which pieces surround x,y will update the
     // surrounding array to reflect this
-    private boolean determineSurrounding(final int x, final int y) {
+    private boolean determineSurrounding(final int x, final int y, boolean hasToBeDeleted, int whereFrom) {
         boolean right = false;
         boolean up = false;
         boolean left = false;
         boolean down = false;
-        if ((x < 6 && render[x + 1][y].getPiece() == opposing) || x >= 6) {
+
+        if (x < 6 && render[x + 1][y].getPiece() == opposing || x == 6) {
             right = true;
+        } else if (x < 6 && render[x + 1][y].getPiece() == current_player) {
+            if (whereFrom != 1) {
+                right = determineSurrounding(x + 1, y, true, -1);
+            } else {
+                right = true;
+            }
+        } else if (render[x + 1][y].getPiece() == 0) {
+            return false;
         }
-        if ((x > 0 && render[x - 1][y].getPiece() == opposing) || x <= 0) {
+        if (x > 0 && render[x - 1][y].getPiece() == opposing || x == 0) {
             left = true;
+        } else if (x > 0 && render[x - 1][y].getPiece() == current_player) {
+            if (whereFrom != -1) {
+                left = determineSurrounding(x - 1, y, true, +1);
+            } else {
+                left = true;
+            }
+        } else if (render[x - 1][y].getPiece() == 0) {
+            return false;
         }
-        if ((y < 6 && render[x][y + 1].getPiece() == opposing) || y >= 6) {
-            up = true;
-        }
-        if ((y > 0 && render[x][y - 1].getPiece() == opposing) || y <= 0) {
+        if (y < 6 && render[x][y + 1].getPiece() == opposing || y == 6) {
             down = true;
+        } else if (y < 6 && render[x][y + 1].getPiece() == current_player) {
+            if (whereFrom != -2) {
+                down = determineSurrounding(x, y + 1, true, +2);
+            } else {
+                down = true;
+            }
+        } else if (render[x][y + 1].getPiece() == 0) {
+            return false;
         }
+        if (y > 0 && render[x][y - 1].getPiece() == opposing || y == 0) {
+            up = true;
+        } else if (y > 0 && render[x][y - 1].getPiece() == current_player) {
+            if (whereFrom != 2) {
+                up = determineSurrounding(x, y - 1, true, -2);
+            } else {
+                up = true;
+            }
+        } else if (render[x][y - 1].getPiece() == 0) {
+            return false;
+        }
+
         return (right && left && up && down);
     }
 
@@ -372,7 +409,12 @@ public class GoBoard extends Pane {
     private void deleteSurrounded() {
         for (int i = 0; i < 7; i += 1) {
             for (int j = 0; j < 7; j += 1) {
-                if (determineSurrounding(j, i)) {
+                checkDeleting[j][i] = determineSurrounding(j, i, true, 0);
+            }
+        }
+        for (int i = 0; i < 7; i += 1) {
+            for (int j = 0; j < 7; j += 1) {
+                if (checkDeleting[j][i]) {
                     render[j][i].setPiece(0);
                 }
             }
@@ -391,6 +433,10 @@ public class GoBoard extends Pane {
                 render[i][j] = new GoPiece(0);
             }
         }
+    }
+
+    private boolean suicideRules(int x, int y) {
+        return determineSurrounding(x, y, false, 0);
     }
 
     private void displayRules() {
@@ -454,4 +500,5 @@ public class GoBoard extends Pane {
     private int pass_player1;
     private int pass_player2;
     private Button rules;
+    private boolean[][] checkDeleting;
 }
