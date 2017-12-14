@@ -42,13 +42,20 @@ public class GoBoard extends Pane {
         pass = new Button("PASS");
         rules = new Button("RULES");
 
-        pass.setOnAction(event -> swapPlayers());
+        pass.setOnAction(event -> {
+            if (current_player == 1)
+                pass_player1++;
+            else if (current_player == 2)
+                pass_player2++;
+            swapPlayers();
+            determineEndGame();
+        });
         rules.setOnAction(event -> displayRules());
 
-        player1_gridpane.add((new Label("PLAYER 1")), 0, 0);
+        player1_gridpane.add((new Label("PLAYER 1 (WHITE)")), 0, 0);
         player1_gridpane.add(player1_label_prisoner, 0, 1);
         player1_gridpane.add(player1_label_territory, 0, 2);
-        player2_gridpane.add((new Label("PLAYER 2")), 0, 0);
+        player2_gridpane.add((new Label("PLAYER 2 (WHITE)")), 0, 0);
         player2_gridpane.add(player2_label_prisoner, 0, 1);
         player2_gridpane.add(player2_label_territory, 0, 2);
 
@@ -104,7 +111,7 @@ public class GoBoard extends Pane {
         swapPlayers();
         deleteSurrounded();
         System.out.println("Player 1 score : " + player1_score + "\nPlayer 2 score : " + player2_score + "\nIt\'s the turn of the Player " + current_player);
-        //determineEndGame();
+
     }
 
     // overridden version of the resize method to give the board the correct size
@@ -166,8 +173,8 @@ public class GoBoard extends Pane {
         in_play = true;
         current_player = 2;
         opposing = 1;
-        player1_score = 2;
-        player2_score = 2;
+        player1_score = 0;
+        player2_score = 0;
     }
 
     // private method that will reset the renders
@@ -324,6 +331,11 @@ public class GoBoard extends Pane {
         render[x][y].resize(cell_width, cell_height);
         render[x][y].relocate((x + 1) * cell_width, (y + 1) * cell_height);
         getChildren().add(render[x][y]);
+
+        if (current_player == 1)
+            pass_player1 = 0;
+        else if (current_player == 2)
+            pass_player2 = 0;
     }
 
     // private method to reverse a chain
@@ -345,6 +357,11 @@ public class GoBoard extends Pane {
     // private method that will determine if the end of the game has been reached
     private void determineEndGame() {
 
+        if (pass_player1 == 2) {
+            System.out.print("Player 1 wins!\nPress SPACE to replay!\n");
+        } else if (pass_player2 == 2) {
+            System.out.print("Player 2 wins!\nPress SPACE to replay!\n");
+        }
     }
 
     // private method to determine if a player has a move available
@@ -434,5 +451,7 @@ public class GoBoard extends Pane {
     private Label player2_label_territory;
     private Label turn;
     private Button pass;
+    private int pass_player1;
+    private int pass_player2;
     private Button rules;
 }
