@@ -32,6 +32,9 @@ public class GoBoard extends Pane {
         opposing = 1;
         player2_score = 2;
         player1_score = 2;
+        xko = 10;
+        yko = 10;
+        ko = false;
 
         player1_gridpane = new GridPane();
         player1_label_prisoner = new Label("PRISONERS: " + player1_score);
@@ -102,11 +105,7 @@ public class GoBoard extends Pane {
         int indexy = (int) (y / cell_height) - 1;
 
 
-       /* if (!in_play || getPiece(indexx, indexy) != 0
-                || !adjacentOpposingPiece(indexx, indexy) || !determineReverse(indexx, indexy)) {
-            return;
-        }*/
-        if (!suicideRules(indexx, indexy)) {
+        if (!suicideRules(indexx, indexy) && !koRules(indexx, indexy)) {
             placeAndReverse(indexx, indexy);
             updateScores();
             swapPlayers();
@@ -178,6 +177,9 @@ public class GoBoard extends Pane {
         opposing = 1;
         player1_score = 0;
         player2_score = 0;
+        xko = 10;
+        yko = 10;
+        ko = false;
     }
 
     // private method that will reset the renders
@@ -373,6 +375,9 @@ public class GoBoard extends Pane {
             pass_player1 = 0;
         else if (current_player == 2)
             pass_player2 = 0;
+        xko = 10;
+        yko = 10;
+        ko = false;
     }
 
     // private method to reverse a chain
@@ -415,7 +420,11 @@ public class GoBoard extends Pane {
         for (int i = 0; i < 7; i += 1) {
             for (int j = 0; j < 7; j += 1) {
                 if (checkDeleting[j][i]) {
-                    render[j][i].setPiece(0);
+                    if (render[j][i].getPiece() != 0) {
+                        render[j][i].setPiece(0);
+                        xko = j;
+                        yko = i;
+                    }
                 }
             }
         }
@@ -435,8 +444,83 @@ public class GoBoard extends Pane {
         }
     }
 
+    private int checkSuicide(final int x, final int y) {
+        boolean right = false;
+        boolean up = false;
+        boolean left = false;
+        boolean down = false;
+        int arround = 0;
+
+
+        if (x < 6 && render[x + 1][y].getPiece() == current_player || x == 6) {
+            arround++;
+        }
+        if (x > 0 && render[x - 1][y].getPiece() == current_player || x == 0) {
+            arround++;
+
+        }
+        if (y < 6 && render[x][y + 1].getPiece() == current_player || y == 6) {
+            arround++;
+
+        }
+        if (y > 0 && render[x][y - 1].getPiece() == current_player || y == 0) {
+            arround++;
+
+
+        }
+        return (arround);
+    }
+
     private boolean suicideRules(int x, int y) {
-        return determineSurrounding(x, y, false, 0);
+
+        if (x < 6 && checkSuicide(x + 1, y) == 3) {
+            ko = true;
+            return false;
+        }
+
+        if (x > 0 && checkSuicide(x - 1, y) == 3) {
+            ko = true;
+            return false;
+        }
+        if (y < 6 && checkSuicide(x, y + 1) == 3) {
+            ko = true;
+            return false;
+        }
+        if (y > 0 && checkSuicide(x, y - 1) == 3) {
+            ko = true;
+            return false;
+        }
+
+        changePlayers();
+        if (checkSuicide(x, y) == 4) {
+            changePlayers();
+            return true;
+        }
+        else {
+            changePlayers();
+            return false;
+        }
+
+    }
+
+    private void changePlayers() {
+        if (current_player == 1) {
+            current_player = 2;
+        }
+        else
+            current_player = 1;
+    }
+
+    private boolean koRules (final int x, final int y) {  // return false = peut jouer / return true = peut pas jouer
+
+        if (x == xko && y == yko && ko == true) {
+            System.out.print("You cannot play here. This is a KO move.\n");
+            return true;
+        }
+            xko = 10;
+            yko = 10;
+            return false;
+
     }
 
     private void displayRules() {
@@ -501,4 +585,7 @@ public class GoBoard extends Pane {
     private int pass_player2;
     private Button rules;
     private boolean[][] checkDeleting;
+    int xko;
+    int yko;
+    boolean ko;
 }
